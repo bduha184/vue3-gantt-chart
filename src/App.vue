@@ -9,12 +9,8 @@ import Carendar from "./components/Carendar.vue";
       <h1 class="text-xl font-bold">ガントチャート</h1>
     </div>
     <div id="gantt-content" class="flex">
-      <div id="gantt-task">
-        <Task />
-      </div>
-      <div id="gantt-calendar">
-        <Carendar />
-      </div>
+      <div id="gantt-task"><Task /></div>
+      <div id="gantt-calendar"><Carendar /></div>
     </div>
   </div>
 </template>
