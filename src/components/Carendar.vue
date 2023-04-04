@@ -1,36 +1,36 @@
-
-<template>
-
-</template>
+<template></template>
 
 <script>
-
+import moment from 'moment';
 export default {
-data(){
+  data() {
     return {
-      start_month: '2020-10',
-      end_month: '2021-02',
+      start_month: "2020-10",
+      end_month: "2021-02",
       block_size: 30,
       block_number: 0,
-    }
+    };
   },
-  methods:{
+  methods: {
     getDays(year, month, block_number) {
-    const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
-    let days = [];
-    let date = moment(`${year}-${month}-01`);
-    let num = date.daysInMonth();
-    for (let i = 0; i < num; i++) {
-      days.push({
-        day: date.date(),
-        dayOfWeek: dayOfWeek[date.day()],
-        block_number
-      })
-      date.add(1, 'day');
-      block_number++;
-    }
-    return days;
-  },     
+      const dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"];
+      let days = [];
+      let date = moment(`${year}-${month}-01`);
+      let num = date.daysInMonth();
+      for (let i = 0; i < num; i++) {
+        days.push({
+          day: date.date(),
+          dayOfWeek: dayOfWeek[date.day()],
+          block_number,
+        });
+        date.add(1, "day");
+        block_number++;
+      }
+      return days;
+    },
+  },
+  mounted(){
+    console.log(this.getDays('2023','4','0'))
   }
-}
+};
 </script>
