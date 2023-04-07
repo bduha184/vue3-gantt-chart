@@ -22,6 +22,7 @@
           <div v-for="day in calendar.days" :key="day.index">
             <div
               class="border-r h-12 absolute flex items-center justify-center flex-col font-bold text-xs"
+              :class="{'bg-blue-100': day.dayOfWeek === '土', 'bg-red-100': day.dayOfWeek ==='日'}"
               :style="`width:${block_size}px;left:${
                 day.block_number * block_size
               }px`"
@@ -37,6 +38,7 @@
           <div v-for="day in calendar.days" :key="day.index">
             <div
               class="border-r border-b absolute"
+              :class="{'bg-blue-100': day.dayOfWeek === '土', 'bg-red-100': day.dayOfWeek ==='日'}"
               :style="`width:${block_size}px;left:${
                 day.block_number * block_size
               }px;height:${calendarViewHeight}px`"
@@ -122,11 +124,15 @@ export default {
   mounted() {
     this.getCalendar();
     this.getDays("2023", "4", "0");
+    this.getWindowSize();
     window.addEventListener("resize", this.getWindowSize);
   },
   computed:{
     calendarViewWidth(){
       return this.inner_width - this.task_width;
+    },
+    calendarViewHeight(){
+      return this.inner_height - this.task_height - 48 - 20;
     }
   }
   };
