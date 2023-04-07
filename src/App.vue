@@ -11,7 +11,6 @@ import Carendar from "./components/Carendar.vue";
     <div id="gantt-content" class="flex">
       <Task />
       <Carendar />
-
     </div>
   </div>
 </template>

@@ -1,13 +1,16 @@
-<script>
 
+<script setup>
+// import Calendar from 'Calendar.vue'
 
 </script>
 
 <template>
-        <div id="gantt-task" ref="task">
+        <div id="gantt-task">
           <div
-            id="gantt-task-title"
-            class="flex items-center bg-green-600 text-white h-20">
+          id="gantt-task-title"
+          class="flex items-center bg-green-600 text-white h-20"
+          ref="task"
+          >
             <div class="border-t border-r border-b flex items-center justify-center font-bold text-xs w-48 h-full">
               タスク
             </div>
