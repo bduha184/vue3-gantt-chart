@@ -32,11 +32,7 @@
       </div>
     </div>
     <div id="gantt-task-list">
-      <div
-        v-for="(list, index) in lists"
-        :key="index"
-        class="flex h-10 border-b"
-      >
+      <div v-for="list in lists" :key="list.index" class="flex h-10 border-b">
         <template v-if="list.cat === 'category'">
           <div class="flex items-center font-bold w-full text-sm pl-2">
             {{ list.name }}
@@ -125,7 +121,17 @@
       id="gantt-bar-area"
       class="relative"
       :style="`width:${calendarViewWidth}px;height:${calendarViewHeight}px`"
-    ></div>
+    >
+      <div v-for="(bar, index) in taskBars" :key="index">
+        <div
+          :style="bar.style"
+          class="rounded-lg absolute h-5 bg-yellow-100"
+          v-if="bar.list.cat === 'task'"
+        >
+          <div class="w-full h-full"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -134,8 +140,8 @@ import moment from "moment";
 export default {
   data() {
     return {
-      start_month: "2022-12",
-      end_month: "2024-01",
+      start_month: "2023-12",
+      end_month: "2024-04",
       block_size: 30,
       block_number: 0,
       calendars: [],
@@ -161,8 +167,8 @@ export default {
           id: 1,
           category_id: 1,
           name: "テスト1",
-          start_date: "2020-11-18",
-          end_date: "2020-11-20",
+          start_date: "2024-01-18",
+          end_date: "2024-01-20",
           incharge_user: "鈴木",
           percentage: 100,
         },
@@ -170,8 +176,8 @@ export default {
           id: 2,
           category_id: 1,
           name: "テスト2",
-          start_date: "2020-11-19",
-          end_date: "2020-11-23",
+          start_date: "2024-01-19",
+          end_date: "2024-01-23",
           incharge_user: "佐藤",
           percentage: 90,
         },
@@ -179,8 +185,8 @@ export default {
           id: 3,
           category_id: 1,
           name: "テスト3",
-          start_date: "2020-11-19",
-          end_date: "2020-12-04",
+          start_date: "2024-01-19",
+          end_date: "2024-02-04",
           incharge_user: "鈴木",
           percentage: 40,
         },
@@ -188,8 +194,8 @@ export default {
           id: 4,
           category_id: 1,
           name: "テスト4",
-          start_date: "2020-11-21",
-          end_date: "2020-11-30",
+          start_date: "2024-01-21",
+          end_date: "2024-01-30",
           incharge_user: "山下",
           percentage: 60,
         },
@@ -197,8 +203,8 @@ export default {
           id: 5,
           category_id: 1,
           name: "テスト5",
-          start_date: "2020-11-25",
-          end_date: "2020-12-04",
+          start_date: "2024-01-25",
+          end_date: "2024-02-04",
           incharge_user: "佐藤",
           percentage: 5,
         },
@@ -206,8 +212,8 @@ export default {
           id: 6,
           category_id: 2,
           name: "テスト6",
-          start_date: "2020-11-28",
-          end_date: "2020-12-08",
+          start_date: "2024-01-28",
+          end_date: "204-02-08",
           incharge_user: "佐藤",
           percentage: 0,
         },
@@ -299,6 +305,35 @@ export default {
         });
       });
       return lists;
+    },
+    taskBars() {
+      let start_date = moment(this.start_month);
+      let top = 10;
+      let left;
+      let between;
+      let start;
+      let style;
+      return this.lists.map((list) => {
+        style = {};
+        if (list.cat === "task") {
+          let date_from = moment(list.start_date);
+          let date_to = moment(list.end_date);
+          between = date_to.diff(date_from, "days");
+          between++;
+          start = date_from.diff(start_date, "days");
+          left = start * this.block_size;
+          style = {
+            top: `${top}px`,
+            left: `${left}px`,
+            width: `${this.block_size * between}px`,
+          };
+        }
+        top = top + 40;
+        return {
+          style,
+          list,
+        };
+      });
     },
   },
 };
