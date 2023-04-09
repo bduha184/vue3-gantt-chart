@@ -3,6 +3,7 @@
     id="gantt-calendar"
     class="overflow-x-scroll"
     :style="`width:${calendarViewWidth}px`"
+    ref="calendar"
   >
     <div id="gantt-date" class="h-20">
       <div id="gantt-year-month" class="relative h-8">
@@ -22,7 +23,10 @@
           <div v-for="day in calendar.days" :key="day.index">
             <div
               class="border-r h-12 absolute flex items-center justify-center flex-col font-bold text-xs"
-              :class="{'bg-blue-100': day.dayOfWeek === '土', 'bg-red-100': day.dayOfWeek ==='日'}"
+              :class="{
+                'bg-blue-100': day.dayOfWeek === '土',
+                'bg-red-100': day.dayOfWeek === '日',
+              }"
               :style="`width:${block_size}px;left:${
                 day.block_number * block_size
               }px`"
@@ -38,7 +42,10 @@
           <div v-for="day in calendar.days" :key="day.index">
             <div
               class="border-r border-b absolute"
-              :class="{'bg-blue-100': day.dayOfWeek === '土', 'bg-red-100': day.dayOfWeek ==='日'}"
+              :class="{
+                'bg-blue-100': day.dayOfWeek === '土',
+                'bg-red-100': day.dayOfWeek === '日',
+              }"
               :style="`width:${block_size}px;left:${
                 day.block_number * block_size
               }px;height:${calendarViewHeight}px`"
@@ -60,8 +67,8 @@ import moment from "moment";
 export default {
   data() {
     return {
-      start_month: "2020-10",
-      end_month: "2021-02",
+      start_month: "2022-12",
+      end_month: "2024-01",
       block_size: 30,
       block_number: 0,
       calendars: [],
@@ -69,6 +76,7 @@ export default {
       inner_height: "",
       task_width: "",
       task_height: "",
+      today: moment(),
     };
   },
   methods: {
@@ -120,20 +128,32 @@ export default {
       this.task_width = this.$refs.task.offsetWidth;
       this.task_height = this.$refs.task.offsetHeight;
     },
+    todayPosition() {
+      this.$refs.calendar.scrollLeft = this.scrollDistance;
+    },
+
   },
   mounted() {
     this.getCalendar();
     this.getDays("2023", "4", "0");
     this.getWindowSize();
     window.addEventListener("resize", this.getWindowSize);
+    this.$nextTick(()=> {
+      this.todayPosition();
+    })
   },
-  computed:{
-    calendarViewWidth(){
+  computed: {
+    calendarViewWidth() {
       return this.inner_width - this.task_width;
     },
-    calendarViewHeight(){
+    calendarViewHeight() {
       return this.inner_height - this.task_height - 48 - 20;
-    }
-  }
-  };
+    },
+    scrollDistance() {
+      let start_date = moment(this.start_month);
+      let between_days = this.today.diff(start_date, "days");
+      return between_days * this.block_size;
+    },
+  },
+};
 </script>

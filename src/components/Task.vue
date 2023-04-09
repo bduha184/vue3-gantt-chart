@@ -1,9 +1,3 @@
-
-<script setup>
-// import Calendar from 'Calendar.vue'
-
-</script>
-
 <template>
         <div id="gantt-task">
           <div
@@ -29,3 +23,10 @@
           </div>
         </div>
 </template>
+
+<script>
+export default{
+  
+}
+
+</script>
