@@ -1,4 +1,27 @@
 <template>
+  <div id="gantt-task">
+          <div
+          id="gantt-task-title"
+          class="flex items-center bg-green-600 text-white h-20"
+          ref="task"
+          >
+            <div class="border-t border-r border-b flex items-center justify-center font-bold text-xs w-48 h-full">
+              タスク
+            </div>
+            <div class="border-t border-r border-b flex items-center justify-center font-bold text-xs w-24 h-full">
+              開始日
+            </div>
+            <div class="border-t border-r border-b flex items-center justify-center font-bold text-xs w-24 h-full" >
+              完了期限日
+            </div>
+            <div class="border-t border-r border-b flex items-center justify-center font-bold text-xs w-16 h-full">
+            担当
+            </div>
+            <div class="border-t border-r border-b flex items-center justify-center font-bold text-xs w-12 h-full">
+              進捗
+            </div>
+          </div>
+        </div>
   <div
     id="gantt-calendar"
     class="overflow-x-scroll"
@@ -26,6 +49,7 @@
               :class="{
                 'bg-blue-100': day.dayOfWeek === '土',
                 'bg-red-100': day.dayOfWeek === '日',
+                'bg-red-600 text-white':calendar.year === today.year() && calendar.month === today.month() && day.day === today.date(),
               }"
               :style="`width:${block_size}px;left:${
                 day.block_number * block_size
@@ -152,7 +176,7 @@ export default {
     scrollDistance() {
       let start_date = moment(this.start_month);
       let between_days = this.today.diff(start_date, "days");
-      return between_days * this.block_size;
+      return (between_days+1) * this.block_size - this.calendarViewWidth/2;
     },
   },
 };
