@@ -135,8 +135,9 @@
           :style="bar.style"
           class="rounded-lg absolute h-5 bg-yellow-100"
           v-if="bar.task.cat === 'task'"
+          @mousedown="mouseDownMove(bar.task)"
         >
-          <div class="w-full h-full"></div>
+          <div class="w-full h-full" style="pointer-events: none"></div>
         </div>
       </div>
     </div>
@@ -158,6 +159,11 @@ export default {
       task_width: "",
       task_height: "",
       position_id: 0,
+      dragging: false,
+      pageX: "",
+      element: "",
+      left: "",
+      task_id: "",
       today: moment(),
       categories: [
         {
@@ -289,6 +295,26 @@ export default {
         this.position_id--;
       }
     },
+    mouseDownMove(task) {
+      this.dragging = true;
+      this.pageX = event.pageX;
+      this.element = event.target;
+      this.left = event.target.style.left;
+      this.task_id = task.id;
+      console.log(event.pageX);
+      console.log(event.target);
+    },
+    mouseMove() {
+      if (this.dragging) {
+        let diff = this.pageX - event.pageX;
+        this.element.style.left = `${
+          parseInt(this.left.replace("px", "")) - diff
+        }px`;
+      }
+    },
+    stopDrag(){
+      this.dragging = false;
+    }
   },
   mounted() {
     this.getCalendar();
@@ -296,10 +322,13 @@ export default {
     this.getWindowSize();
     window.addEventListener("resize", this.getWindowSize);
     window.addEventListener("wheel", this.windowSizeCheck);
+    window.addEventListener("mousemove", this.mouseMove);
+    window.addEventListener("mouseup", this.stopDrag);
     this.$nextTick(() => {
       this.todayPosition();
     });
   },
+
   computed: {
     calendarViewWidth() {
       return this.inner_width - this.task_width;
