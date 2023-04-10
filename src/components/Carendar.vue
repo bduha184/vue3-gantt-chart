@@ -31,28 +31,36 @@
         進捗
       </div>
     </div>
-    <div id="gantt-task-list">
-      <div v-for="list in lists" :key="list.index" class="flex h-10 border-b">
-        <template v-if="list.cat === 'category'">
+    <div
+      id="gantt-task-list"
+      class="overflow-y-hidden"
+      :style="`height:${calendarViewHeight}px`"
+    >
+      <div
+        v-for="task in displayTasks"
+        :key="task.index"
+        class="flex h-10 border-b"
+      >
+        <template v-if="task.cat === 'category'">
           <div class="flex items-center font-bold w-full text-sm pl-2">
-            {{ list.name }}
+            {{ task.name }}
           </div>
         </template>
         <template v-else>
           <div class="border-r flex items-center font-bold w-48 text-sm pl-4">
-            {{ list.name }}
+            {{ task.name }}
           </div>
           <div class="border-r flex items-center justify-center w-24 text-sm">
-            {{ list.start_date }}
+            {{ task.start_date }}
           </div>
           <div class="border-r flex items-center justify-center w-24 text-sm">
-            {{ list.end_date }}
+            {{ task.end_date }}
           </div>
           <div class="border-r flex items-center justify-center w-16 text-sm">
-            {{ list.incharge_user }}
+            {{ task.incharge_user }}
           </div>
           <div class="flex items-center justify-center w-12 text-sm">
-            {{ list.percentage }}%
+            {{ task.percentage }}%
           </div>
         </template>
       </div>
@@ -60,7 +68,7 @@
   </div>
   <div
     id="gantt-calendar"
-    class="overflow-x-scroll"
+    class="overflow-x-scroll overflow-y-hidden border-l"
     :style="`width:${calendarViewWidth}px`"
     ref="calendar"
   >
@@ -126,7 +134,7 @@
         <div
           :style="bar.style"
           class="rounded-lg absolute h-5 bg-yellow-100"
-          v-if="bar.list.cat === 'task'"
+          v-if="bar.task.cat === 'task'"
         >
           <div class="w-full h-full"></div>
         </div>
@@ -140,8 +148,8 @@ import moment from "moment";
 export default {
   data() {
     return {
-      start_month: "2023-12",
-      end_month: "2024-04",
+      start_month: "2022-10",
+      end_month: "2023-12",
       block_size: 30,
       block_number: 0,
       calendars: [],
@@ -149,6 +157,7 @@ export default {
       inner_height: "",
       task_width: "",
       task_height: "",
+      position_id: 0,
       today: moment(),
       categories: [
         {
@@ -167,8 +176,8 @@ export default {
           id: 1,
           category_id: 1,
           name: "テスト1",
-          start_date: "2024-01-18",
-          end_date: "2024-01-20",
+          start_date: "2023-01-18",
+          end_date: "2023-01-20",
           incharge_user: "鈴木",
           percentage: 100,
         },
@@ -176,8 +185,8 @@ export default {
           id: 2,
           category_id: 1,
           name: "テスト2",
-          start_date: "2024-01-19",
-          end_date: "2024-01-23",
+          start_date: "2023-01-19",
+          end_date: "2023-01-23",
           incharge_user: "佐藤",
           percentage: 90,
         },
@@ -185,8 +194,8 @@ export default {
           id: 3,
           category_id: 1,
           name: "テスト3",
-          start_date: "2024-01-19",
-          end_date: "2024-02-04",
+          start_date: "2023-01-19",
+          end_date: "2023-02-04",
           incharge_user: "鈴木",
           percentage: 40,
         },
@@ -194,8 +203,8 @@ export default {
           id: 4,
           category_id: 1,
           name: "テスト4",
-          start_date: "2024-01-21",
-          end_date: "2024-01-30",
+          start_date: "2023-01-21",
+          end_date: "2023-01-30",
           incharge_user: "山下",
           percentage: 60,
         },
@@ -203,8 +212,8 @@ export default {
           id: 5,
           category_id: 1,
           name: "テスト5",
-          start_date: "2024-01-25",
-          end_date: "2024-02-04",
+          start_date: "2023-01-25",
+          end_date: "2023-02-04",
           incharge_user: "佐藤",
           percentage: 5,
         },
@@ -212,7 +221,7 @@ export default {
           id: 6,
           category_id: 2,
           name: "テスト6",
-          start_date: "2024-01-28",
+          start_date: "2023-01-28",
           end_date: "204-02-08",
           incharge_user: "佐藤",
           percentage: 0,
@@ -272,12 +281,21 @@ export default {
     todayPosition() {
       this.$refs.calendar.scrollLeft = this.scrollDistance;
     },
+    windowSizeCheck(e) {
+      let height = this.lists.length - this.position_id;
+      if (e.deltaY > 0 && height * 40 > this.calendarViewHeight) {
+        this.position_id++;
+      } else if (e.deltaY < 0 && this.position_id !== 0) {
+        this.position_id--;
+      }
+    },
   },
   mounted() {
     this.getCalendar();
     this.getDays("2023", "4", "0");
     this.getWindowSize();
     window.addEventListener("resize", this.getWindowSize);
+    window.addEventListener("wheel", this.windowSizeCheck);
     this.$nextTick(() => {
       this.todayPosition();
     });
@@ -313,11 +331,11 @@ export default {
       let between;
       let start;
       let style;
-      return this.lists.map((list) => {
+      return this.displayTasks.map((task) => {
         style = {};
-        if (list.cat === "task") {
-          let date_from = moment(list.start_date);
-          let date_to = moment(list.end_date);
+        if (task.cat === "task") {
+          let date_from = moment(task.start_date);
+          let date_to = moment(task.end_date);
           between = date_to.diff(date_from, "days");
           between++;
           start = date_from.diff(start_date, "days");
@@ -331,9 +349,16 @@ export default {
         top = top + 40;
         return {
           style,
-          list,
+          task,
         };
       });
+    },
+    displayTasks() {
+      let display_task_number = Math.floor(this.calendarViewHeight / 40);
+      return this.lists.slice(
+        this.position_id,
+        this.position_id + display_task_number
+      );
     },
   },
 };
