@@ -45,8 +45,44 @@
         @dragover.prevent="dragTaskOver(task)"
       >
         <template v-if="task.cat === 'category'">
-          <div class="flex items-center font-bold w-full text-sm pl-2">
+          <div
+            class="flex items-center font-bold w-full text-sm pl-2 justify-between items-center bg-teal-100"
+          >
             {{ task.name }}
+            <div class="pr-4" @click="toggleCategory(task.id)">
+              <span v-if="task.collapsed">
+                <svg
+                  class="w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </span>
+              <span v-else>
+                <svg
+                  class="w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </span>
+            </div>
           </div>
         </template>
         <template v-else>
@@ -449,6 +485,12 @@ export default {
         }
       }
     },
+    toggleCategory(task_id) {
+      let category = this.categories.find(
+        (category) => category.id === task_id
+      );
+      category["collapsed"] = !category["collapsed"];
+    },
   },
   mounted() {
     this.getCalendar();
@@ -481,7 +523,7 @@ export default {
       this.categories.map((category) => {
         lists.push({ cat: "category", ...category });
         this.tasks.map((task) => {
-          if (task.category_id === category.id) {
+          if (task.category_id === category.id && !category.collapsed) {
             lists.push({ cat: "task", ...task });
           }
         });
