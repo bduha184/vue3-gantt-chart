@@ -40,6 +40,9 @@
         v-for="task in displayTasks"
         :key="task.index"
         class="flex h-10 border-b"
+        draggable="true"
+        @dragstart="dragTask(task)"
+        @dragover.prevent="dragTaskOver(task)"
       >
         <template v-if="task.cat === 'category'">
           <div class="flex items-center font-bold w-full text-sm pl-2">
@@ -184,6 +187,7 @@ export default {
       width: "",
       leftResizing: false,
       rightResizing: false,
+      task: "",
       today: moment(),
       categories: [
         {
@@ -417,6 +421,31 @@ export default {
           this.element.style.width = `${
             parseInt(this.width.replace("px", "")) - diff
           }px`;
+        }
+      }
+    },
+    dragTask(dragTask) {
+      this.task = dragTask;
+    },
+    dragTaskOver(overTask) {
+      let deleteIndex;
+      let addIndex;
+      if (this.task.cat !== "category") {
+        if (overTask.cat === "category") {
+          let updateTask = this.tasks.find((task) => task.id === this.task.id);
+          updateTask["category_id"] = overTask["id"];
+        } else {
+          if (overTask.id !== this.task.id) {
+            this.tasks.map((task, index) => {
+              if (task.id === this.task.id) deleteIndex = index;
+            });
+            this.tasks.map((task, index) => {
+              if (task.id === overTask.id) addIndex = index;
+            });
+            this.tasks.splice(deleteIndex, 1);
+            this.task["category_id"] = overTask["category_id"];
+            this.tasks.splice(addIndex, 0, this.task);
+          }
         }
       }
     },
