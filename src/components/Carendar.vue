@@ -203,6 +203,8 @@
 <script>
 import moment from "moment";
 export default {
+  name:'Carendar',
+
   data() {
     return {
       start_month: "2022-10",
@@ -491,6 +493,9 @@ export default {
       );
       category["collapsed"] = !category["collapsed"];
     },
+    addTask(){
+      console.log('addTask');
+    }
   },
   mounted() {
     this.getCalendar();
