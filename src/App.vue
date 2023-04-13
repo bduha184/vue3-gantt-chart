@@ -34,7 +34,7 @@
                 class="text-xs border px-4 py-2 rounded-lg"
               >
                 <option
-                  v-for="category in categories"
+                  v-for="category in category_data"
                   :key="category.id"
                   :value="category.id"
                 >
@@ -121,6 +121,8 @@
 
 <script>
 import Carendar from "./components/Carendar.vue";
+import category_data from './data/categories.json';
+import task_data from './data/tasks.json';
 
 export default {
   name: "App",
@@ -130,6 +132,8 @@ export default {
   data() {
     return {
       show: false,
+      category_data,
+      task_data,
       form: {
         category_id:'',
         id: "",
@@ -146,7 +150,8 @@ export default {
       this.show = true;
     },
     saveTask(){
-      this.tasks.push(this.form);
+      console.log(this.task_data);
+      this.task_data.push(this.form);
       this.form = {};
       this.show = false
     }
