@@ -202,6 +202,8 @@
 
 <script>
 import moment from "moment";
+import category_data from '../data/categories.json';
+import task_data from '../data/tasks.json';
 export default {
   name:'Carendar',
 
@@ -227,74 +229,8 @@ export default {
       rightResizing: false,
       task: "",
       today: moment(),
-      categories: [
-        {
-          id: 1,
-          name: "テストA",
-          collapsed: false,
-        },
-        {
-          id: 2,
-          name: "テストB",
-          collapsed: false,
-        },
-      ],
-      tasks: [
-        {
-          id: 1,
-          category_id: 1,
-          name: "テスト1",
-          start_date: "2023-01-18",
-          end_date: "2023-01-20",
-          incharge_user: "鈴木",
-          percentage: 100,
-        },
-        {
-          id: 2,
-          category_id: 1,
-          name: "テスト2",
-          start_date: "2023-01-19",
-          end_date: "2023-01-23",
-          incharge_user: "佐藤",
-          percentage: 90,
-        },
-        {
-          id: 3,
-          category_id: 1,
-          name: "テスト3",
-          start_date: "2023-01-19",
-          end_date: "2023-02-04",
-          incharge_user: "鈴木",
-          percentage: 40,
-        },
-        {
-          id: 4,
-          category_id: 1,
-          name: "テスト4",
-          start_date: "2023-01-21",
-          end_date: "2023-01-30",
-          incharge_user: "山下",
-          percentage: 60,
-        },
-        {
-          id: 5,
-          category_id: 1,
-          name: "テスト5",
-          start_date: "2023-01-25",
-          end_date: "2023-02-04",
-          incharge_user: "佐藤",
-          percentage: 5,
-        },
-        {
-          id: 6,
-          category_id: 2,
-          name: "テスト6",
-          start_date: "2023-01-28",
-          end_date: "204-02-08",
-          incharge_user: "佐藤",
-          percentage: 0,
-        },
-      ],
+      category_data,
+      task_data,
     };
   },
   methods: {
@@ -380,7 +316,7 @@ export default {
         let days = Math.ceil(diff / this.block_size);
         if (days !== 0) {
           console.log(days);
-          let task = this.tasks.find((task) => task.id === this.task_id);
+          let task = this.task_data.find((task) => task.id === this.task_id);
           let start_date = moment(task.start_date).add(-days, "days");
           let end_date = moment(task.end_date).add(-days, "days");
           task["start_date"] = start_date.format("YYYY-MM-DD");
@@ -393,7 +329,7 @@ export default {
         let diff = this.pageX - event.pageX;
         let days = Math.ceil(diff / this.block_size);
         if (days !== 0) {
-          let task = this.tasks.find((task) => task.id === this.task_id);
+          let task = this.task_data.find((task) => task.id === this.task_id);
           let start_date = moment(task.start_date).add(-days, "days");
           let end_date = moment(task.end_date);
           if (end_date.diff(start_date, "days") <= 0) {
@@ -415,11 +351,11 @@ export default {
           )}px`;
         } else if (days <= 2) {
           days--;
-          let task = this.tasks.find((task) => task.id === this.task_id);
+          let task = this.task_data.find((task) => task.id === this.task_id);
           let end_date = moment(task.end_date).add(-days, "days");
           task["end_date"] = end_date.format("YYYY-MM-DD");
         } else {
-          let task = this.tasks.find((task) => task.id === this.task_id);
+          let task = this.task_data.find((task) => task.id === this.task_id);
           let start_date = moment(task.start_date);
           let end_date = moment(task.end_date).add(-days, "days");
           if (end_date.diff(start_date, "days") < 0) {
@@ -470,25 +406,25 @@ export default {
       let addIndex;
       if (this.task.cat !== "category") {
         if (overTask.cat === "category") {
-          let updateTask = this.tasks.find((task) => task.id === this.task.id);
+          let updateTask = this.task_data.find((task) => task.id === this.task.id);
           updateTask["category_id"] = overTask["id"];
         } else {
           if (overTask.id !== this.task.id) {
-            this.tasks.map((task, index) => {
+            this.task_data.map((task, index) => {
               if (task.id === this.task.id) deleteIndex = index;
             });
-            this.tasks.map((task, index) => {
+            this.task_data.map((task, index) => {
               if (task.id === overTask.id) addIndex = index;
             });
-            this.tasks.splice(deleteIndex, 1);
+            this.task_data.splice(deleteIndex, 1);
             this.task["category_id"] = overTask["category_id"];
-            this.tasks.splice(addIndex, 0, this.task);
+            this.task_data.splice(addIndex, 0, this.task);
           }
         }
       }
     },
     toggleCategory(task_id) {
-      let category = this.categories.find(
+      let category = this.category_data.find(
         (category) => category.id === task_id
       );
       category["collapsed"] = !category["collapsed"];
@@ -525,9 +461,9 @@ export default {
     },
     lists() {
       let lists = [];
-      this.categories.map((category) => {
+      this.category_data.map((category) => {
         lists.push({ cat: "category", ...category });
-        this.tasks.map((task) => {
+        this.task_data.map((task) => {
           if (task.category_id === category.id && !category.collapsed) {
             lists.push({ cat: "task", ...task });
           }
