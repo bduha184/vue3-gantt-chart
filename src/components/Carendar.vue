@@ -86,7 +86,11 @@
           </div>
         </template>
         <template v-else>
-          <div class="border-r flex items-center font-bold w-48 text-sm pl-4">
+          <div
+          class="border-r flex items-center font-bold w-48 text-sm pl-4"
+          @click="editTask"
+          >
+
             {{ task.name }}
           </div>
           <div class="border-r flex items-center justify-center w-24 text-sm">
@@ -429,14 +433,15 @@ export default {
       );
       category["collapsed"] = !category["collapsed"];
     },
-    addTask(){
-      console.log('addTask');
+    editTask(task) {
+      this.show=true;
     }
   },
   mounted() {
     this.getCalendar();
     this.getDays("2023", "4", "0");
     this.getWindowSize();
+    this.editTask();
     window.addEventListener("resize", this.getWindowSize);
     window.addEventListener("wheel", this.windowSizeCheck);
     window.addEventListener("mousemove", this.mouseMove);
